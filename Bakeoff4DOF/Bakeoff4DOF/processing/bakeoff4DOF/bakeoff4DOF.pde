@@ -1,5 +1,6 @@
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.*;
 
 //these are variables you should probably leave alone
 int index = 0; //starts at zero-ith trial
@@ -106,6 +107,31 @@ void draw() {
   fill(60, 60, 192, 192);
   rect(0, 0, logoZ, logoZ);
   popMatrix();
+  
+  //Draw corner circles
+  ////TOP RIGHT VERTEX:
+  //float Top_Right_x = logoX + ((logoZ / 2) * cos(logoRotation)) - ((logoZ / 2) * sin(logoRotation));
+  //float Top_Right_y = logoY + ((logoZ / 2) * sin(logoRotation)) + ((logoZ / 2) * cos(logoRotation));
+
+
+
+  ////TOP LEFT VERTEX:
+  //float Top_Left_x = logoX - ((logoZ / 2) * cos(logoRotation)) - ((logoZ / 2) * sin(logoRotation));
+  //float Top_Left_y = logoY - ((logoZ / 2) * sin(logoRotation)) + ((logoZ / 2) * cos(logoRotation));
+
+
+
+  ////BOTTOM LEFT VERTEX:
+  //float Bot_Left_x = logoX - ((logoZ / 2) * cos(logoRotation)) + ((logoZ / 2) * sin(logoRotation));
+  //float Bot_Left_y = logoY - ((logoZ / 2) * sin(logoRotation)) - ((logoZ / 2) * cos(logoRotation));
+
+
+
+  ////BOTTOM RIGHT VERTEX:
+  //float Bot_Right_x = logoX + ((logoZ / 2) * cos(logoRotation)) + ((logoZ / 2) * sin(logoRotation));
+  //float Bot_Right_y = logoY + ((logoZ / 2) * sin(logoRotation)) - ((logoZ / 2) * cos(logoRotation));
+  
+  //elipse(Top_Right_x, To
 
   //===========DRAW EXAMPLE CONTROLS=================
   fill(255);
@@ -174,6 +200,8 @@ void scaffoldControlLogic()
 
 void mouseDragged()
 {
+  //if(mouse is at the corner, scale)
+  //else
   logoX = mouseX;
   logoY = mouseY;
 }
