@@ -32,6 +32,8 @@ private class Destination
 
 ArrayList<Destination> destinations = new ArrayList<Destination>();
 
+Slider slider1, slider2;
+
 void setup() {
   size(1000, 800);  
   rectMode(CENTER);
@@ -55,9 +57,10 @@ void setup() {
   }
 
   Collections.shuffle(destinations); // randomize the order of the button; don't change this.
+  
+  slider1 = new Slider(width/4, height-30, width/3, 40, 0, 180);
+  slider2 = new Slider(width*3/4, height-30, width/3, 40, 10, 500);
 }
-
-
 
 void draw() {
 
@@ -91,7 +94,12 @@ void draw() {
     rect(0, 0, d.z, d.z);
     popMatrix();
   }
-
+  
+  slider1.update();
+  slider2.update();
+  slider1.display();
+  slider2.display();
+  
   //===========DRAW LOGO SQUARE=================
   pushMatrix();
   translate(logoX, logoY); //translate draw center to the center oft he logo square
@@ -108,102 +116,28 @@ void draw() {
   rect(0, 0, logoZ, logoZ);
   popMatrix();
   
-  //Draw corner circles
-  ////TOP RIGHT VERTEX:
-  //float Top_Right_x = logoX + ((logoZ / 2) * cos(logoRotation)) - ((logoZ / 2) * sin(logoRotation));
-  //float Top_Right_y = logoY + ((logoZ / 2) * sin(logoRotation)) + ((logoZ / 2) * cos(logoRotation));
-
-
-
-  ////TOP LEFT VERTEX:
-  //float Top_Left_x = logoX - ((logoZ / 2) * cos(logoRotation)) - ((logoZ / 2) * sin(logoRotation));
-  //float Top_Left_y = logoY - ((logoZ / 2) * sin(logoRotation)) + ((logoZ / 2) * cos(logoRotation));
-
-
-
-  ////BOTTOM LEFT VERTEX:
-  //float Bot_Left_x = logoX - ((logoZ / 2) * cos(logoRotation)) + ((logoZ / 2) * sin(logoRotation));
-  //float Bot_Left_y = logoY - ((logoZ / 2) * sin(logoRotation)) - ((logoZ / 2) * cos(logoRotation));
-
-
-
-  ////BOTTOM RIGHT VERTEX:
-  //float Bot_Right_x = logoX + ((logoZ / 2) * cos(logoRotation)) + ((logoZ / 2) * sin(logoRotation));
-  //float Bot_Right_y = logoY + ((logoZ / 2) * sin(logoRotation)) - ((logoZ / 2) * cos(logoRotation));
-  
-  //elipse(Top_Right_x, To
-
   //===========DRAW EXAMPLE CONTROLS=================
   fill(255);
   //clickAndDrag();
-  //scaffoldControlLogic(); //you are going to want to replace this!
+  scaffoldControlLogic(); //you are going to want to replace this!
   text("Trial " + (trialIndex+1) + " of " +trialCount, width/2, inchToPix(.8f));
-  
-  
 }
 
 //my example design for control, which is terrible
 void scaffoldControlLogic()
 {
-  //upper left corner, rotate counterclockwise
-  text("CCW", inchToPix(.4f), inchToPix(.4f));
-  if (mousePressed && dist(0, 0, mouseX, mouseY)<inchToPix(.8f))
-    logoRotation--;
-
-  //upper right corner, rotate clockwise
-  text("CW", width-inchToPix(.4f), inchToPix(.4f));
-  if (mousePressed && dist(width, 0, mouseX, mouseY)<inchToPix(.8f))
-    logoRotation++;
-
-  //lower left corner, decrease Z
-  text("-", inchToPix(.4f), height-inchToPix(.4f));
-  if (mousePressed && dist(0, height, mouseX, mouseY)<inchToPix(.8f))
-    logoZ = constrain(logoZ-inchToPix(.02f), .01, inchToPix(4f)); //leave min and max alone!
-
-  //lower right corner, increase Z
-  text("+", width-inchToPix(.4f), height-inchToPix(.4f));
-  if (mousePressed && dist(width, height, mouseX, mouseY)<inchToPix(.8f))
-    logoZ = constrain(logoZ+inchToPix(.02f), .01, inchToPix(4f)); //leave min and max alone! 
-
-  //left middle, move left
-  text("left", inchToPix(.4f), height/2);
-  if (mousePressed && dist(0, height/2, mouseX, mouseY)<inchToPix(.8f))
-    logoX-=inchToPix(.02f);
-
-  text("right", width-inchToPix(.4f), height/2);
-  if (mousePressed && dist(width, height/2, mouseX, mouseY)<inchToPix(.8f))
-    logoX+=inchToPix(.02f);
-
-  text("up", width/2, inchToPix(.4f));
-  if (mousePressed && dist(width/2, 0, mouseX, mouseY)<inchToPix(.8f))
-    logoY-=inchToPix(.02f);
-
-  text("down", width/2, height-inchToPix(.4f));
-  if (mousePressed && dist(width/2, height, mouseX, mouseY)<inchToPix(.8f))
-    logoY+=inchToPix(.02f);
+  text("submit", width/2, inchToPix(.4f));
+  logoRotation = slider1.getVal();
+  logoZ = slider2.getVal();
 }
-
-//void clickAndDrag()
-//{
-//  color c = get(mouseX, mouseY);
-//  color r = c >> 020 & 0xFF;
-//  color g = c >> 010 & 0xFF;
-//  color b = c & 0xFF;
-//  //println("red " + r + " green " + g + " blueColor " + b);
-//  if(mousePressed && r == 55 && g == 55 && b == 155)
-//  {
-//    println("same color");
-//    logoX = mouseX;
-//    logoY = mouseY;
-//  }
-//}
 
 void mouseDragged()
 {
-  //if(mouse is at the corner, scale)
-  //else
-  logoX = mouseX;
-  logoY = mouseY;
+  if (dist(logoX, logoY, mouseX, mouseY)<inchToPix(.8f)) 
+  {
+    logoX = mouseX;
+    logoY = mouseY;
+  }
 }
 
 void mousePressed()
@@ -217,8 +151,8 @@ void mousePressed()
 
 void mouseReleased()
 {
-  //check to see if user clicked middle of screen within 3 inches, which this code uses as a submit button
-  if (dist(width/2, height/2, mouseX, mouseY)<inchToPix(3f))
+  //check to see if user clicked near submit button
+  if (dist(width/2, inchToPix(.4f), mouseX, mouseY)<inchToPix(.8f))
   {
     if (userDone==false && !checkForSuccess())
       errorCount++;
@@ -264,4 +198,87 @@ double calculateDifferenceBetweenAngles(float a1, float a2)
 float inchToPix(float inch)
 {
   return inch*screenPPI;
+}
+
+class Slider {
+  float barX, barY;  // center x, y pos of the whole slide bar
+  int barW, barH, sliderW, sliderH;
+  int min, max;
+  float sliderX, sliderY; // center x, y of slider
+  float val;
+  
+  Slider (float x, float y, int w, int h, int val_min, int val_max) 
+  {
+    barX = x;
+    barY = y;
+    sliderX = x;
+    sliderY = y;
+    barW = w;
+    barH = h;
+    min = val_min;
+    max = val_max;
+    val = (max - min) / 2;
+    sliderW = 20;
+    sliderH = barH;
+  }
+  
+  void update()
+  {
+    if (overEvent() && mousePressed)
+    {
+      float temp;
+      if (mouseX < barX-barW/2)
+      {
+        temp = barX-barW/2;
+      } 
+      else if (mouseX > barX + barW/2 - sliderW)
+      {
+        temp = barX + barW/2 - sliderW;
+      }
+      else
+      {
+        temp = mouseX;
+      }
+      
+      sliderX = temp;
+    }
+    
+    val = map(sliderX, barX-barW/2, barX+barW/2-sliderW, min, max);
+  }
+  
+  void display()
+  {
+    noStroke();
+    fill(204);
+    rect(barX, barY, barW, barH);
+    
+    if (overEvent())
+    {
+      fill(0, 0, 0);
+    }
+    else
+    {
+      fill(102, 102, 102);
+    }
+    rect(sliderX, sliderY, sliderW, sliderH);
+  }
+   
+   
+  boolean overEvent() 
+  {
+    if (dist(sliderX, sliderY, mouseX, mouseY)<inchToPix(.8f))
+    {
+      return true;
+    }
+    else 
+    {
+      return false;
+    }
+  }
+  
+  float getVal()
+  {
+    println(val);
+    return val;
+  }
 }
