@@ -58,8 +58,8 @@ void setup() {
 
   Collections.shuffle(destinations); // randomize the order of the button; don't change this.
   
-  slider1 = new Slider(width/4, height-30, width/3, 40, 0, 180);
-  slider2 = new Slider(width*3/4, height-30, width/3, 40, 10, 500);
+  slider1 = new Slider(width/4, height-30, width/3, 40, 0, 180, "Rotation");
+  slider2 = new Slider(width*3/4, height-30, width/3, 40, 10, 500, "Size");
 }
 
 void draw() {
@@ -97,8 +97,8 @@ void draw() {
   
   slider1.update();
   slider2.update();
-  slider1.display();
-  slider2.display();
+  slider1.displayRot();
+  slider2.displayScale();
   
   //===========DRAW LOGO SQUARE=================
   pushMatrix();
@@ -119,14 +119,24 @@ void draw() {
   //===========DRAW EXAMPLE CONTROLS=================
   fill(255);
   //clickAndDrag();
-  scaffoldControlLogic(); //you are going to want to replace this!
-  text("Trial " + (trialIndex+1) + " of " +trialCount, width/2, inchToPix(.8f));
+  sliderLogic(); 
+  text("Trial " + (trialIndex+1) + " of " +trialCount, width/3, inchToPix(.4f));
+  if (dist(2*width/3, inchToPix(.4f), mouseX, mouseY)<inchToPix(.4f))
+  {
+    fill(0,255,0);
+  }
+  else
+  {
+    fill(255, 0, 0);
+  }
+  textSize(25);
+  text("SUBMIT", 2*width/3, inchToPix(.4f));
+  
 }
 
-//my example design for control, which is terrible
-void scaffoldControlLogic()
+//slide controls
+void sliderLogic()
 {
-  text("submit", width/2, inchToPix(.4f));
   logoRotation = slider1.getVal();
   logoZ = slider2.getVal();
 }
@@ -152,7 +162,7 @@ void mousePressed()
 void mouseReleased()
 {
   //check to see if user clicked near submit button
-  if (dist(width/2, inchToPix(.4f), mouseX, mouseY)<inchToPix(.8f))
+  if (dist(2*width/3, inchToPix(.4f), mouseX, mouseY)<inchToPix(.4f))
   {
     if (userDone==false && !checkForSuccess())
       errorCount++;
@@ -183,6 +193,20 @@ public boolean checkForSuccess()
   return closeDist && closeRotation && closeZ;
 }
 
+public boolean checkForRot()
+{
+  Destination d = destinations.get(trialIndex);  
+  boolean closeRotation = calculateDifferenceBetweenAngles(d.rotation, logoRotation)<=5;
+  return closeRotation;
+}
+
+public boolean checkForZ()
+{
+  Destination d = destinations.get(trialIndex);  
+  boolean closeZ = abs(d.z - logoZ)<inchToPix(.1f); //has to be within +-0.1" 
+  return closeZ;
+}
+
 //utility function I include to calc diference between two angles
 double calculateDifferenceBetweenAngles(float a1, float a2)
 {
@@ -206,8 +230,9 @@ class Slider {
   int min, max;
   float sliderX, sliderY; // center x, y of slider
   float val;
+  String name;
   
-  Slider (float x, float y, int w, int h, int val_min, int val_max) 
+  Slider (float x, float y, int w, int h, int val_min, int val_max, String _name) 
   {
     barX = x;
     barY = y;
@@ -220,6 +245,7 @@ class Slider {
     val = (max - min) / 2;
     sliderW = 20;
     sliderH = barH;
+    name = _name;
   }
   
   void update()
@@ -246,7 +272,7 @@ class Slider {
     val = map(sliderX, barX-barW/2, barX+barW/2-sliderW, min, max);
   }
   
-  void display()
+  void displayRot()
   {
     noStroke();
     fill(204);
@@ -260,7 +286,46 @@ class Slider {
     {
       fill(102, 102, 102);
     }
+    
+    if(checkForRot())
+    {
+      fill(0,255,0);
+    }
     rect(sliderX, sliderY, sliderW, sliderH);
+    //display slider labels
+    textSize(30);
+    fill(0, 408, 612, 204);
+    text("CCW", barX-barW/2+25, barY-22);
+    text("CW", barX+barW/2-sliderW, barY-22);
+    text(name, barX, barY-22);
+  }
+  
+  void displayScale()
+  {
+    noStroke();
+    fill(204);
+    rect(barX, barY, barW, barH);
+    
+    if (overEvent())
+    {
+      fill(0, 0, 0);
+    }
+    else
+    {
+      fill(102, 102, 102);
+    }
+    
+    if(checkForZ())
+    {
+      fill(0,255,0);
+    }
+    rect(sliderX, sliderY, sliderW, sliderH);
+    //display labels
+    textSize(30);
+    fill(0, 408, 612, 204);
+    text("-", barX-barW/2+15, barY-22);
+    text("+", barX+barW/2-sliderW, barY-22);
+    text(name, barX, barY-22);
   }
    
    
