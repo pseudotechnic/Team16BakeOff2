@@ -58,8 +58,8 @@ void setup() {
 
   Collections.shuffle(destinations); // randomize the order of the button; don't change this.
   
-  slider1 = new Slider(width/4, height-30, width/3, 40, 0, 180);
-  slider2 = new Slider(width*3/4, height-30, width/3, 40, 10, 500);
+  slider1 = new Slider(width/4, height-30, width/3, 40, 0, 180, "Rotation");
+  slider2 = new Slider(width*3/4, height-30, width/3, 40, 10, 500, "Size");
 }
 
 void draw() {
@@ -230,8 +230,9 @@ class Slider {
   int min, max;
   float sliderX, sliderY; // center x, y of slider
   float val;
+  String name;
   
-  Slider (float x, float y, int w, int h, int val_min, int val_max) 
+  Slider (float x, float y, int w, int h, int val_min, int val_max, String _name) 
   {
     barX = x;
     barY = y;
@@ -244,6 +245,7 @@ class Slider {
     val = (max - min) / 2;
     sliderW = 20;
     sliderH = barH;
+    name = _name;
   }
   
   void update()
@@ -290,6 +292,17 @@ class Slider {
       fill(0,255,0);
     }
     rect(sliderX, sliderY, sliderW, sliderH);
+    displayLabels();
+  }
+  
+  void displayLabels()
+  {
+    // display name of bar and its range
+    textSize(20);
+    fill(0, 408, 612, 204);
+    text(min, barX-barW/2, barY-22);
+    text(max, barX+barW/2-sliderW, barY-22);
+    text(name, barX, barY-22);
   }
   
   void displayScale()
@@ -312,6 +325,7 @@ class Slider {
       fill(0,255,0);
     }
     rect(sliderX, sliderY, sliderW, sliderH);
+    displayLabels();
   }
    
    
